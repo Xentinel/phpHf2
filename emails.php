@@ -38,41 +38,59 @@
 
 
         <div class="jumbotron">
-            <h1>Your costumers: </h1>
+            <h1>Tus clientes. </h1>
             <p>
+                Selecciona algunos clientes para eliminarlos de tu lista. Ten cuidado,
+                esta acción no se puede deshacer.
+            </p>
                 <?php
 
-                //inserting into the database
+                //select all clientes from the database
                 $dbc = mysqli_connect('localhost','root','andrea','elvisStore') or die('Error conecting.');
 
                 $query = "SELECT * FROM emailList";
 
                 $result = mysqli_query($dbc,$query) or die('Error insertando en la bd');
+                
+                echo '<form action="'.$_SERVER['PHP_SELF'].'" method="post" role="form">';
+                echo '<div class="form-group">';
 
                  while($row = mysqli_fetch_array($result))
                 {
-                    echo $row['firstName'].' '.$row['lastName'].': '.$row['email'].'<br>';
+                    
+                    echo '<input type="checkbox" value ="'.$row['id'].'" name = "toDelete[]"/>';
+                    echo ' '.$row['firstName'].' '.$row['lastName'].': '.$row['email'].'<br>';
                 }
+                echo '<br><button type="submit" name="submit" value="submit" class="btn btn-primary">Borrar</button>';
+                echo '</div>';                
+                
                 mysqli_close($dbc);
                 ?>
-            </p>
         </div>
-
-        <div class="jumbotron">
-            <h1> Borrar un cliente.</h1>
-            <p>
-                Introduce el email de algun cliente para eliminarlo de tu lista. Ten cuidado,
-                esta acción no se puede deshacer.
-            </p>
-            <form action="delete.php" method="post" role="form">
-                <div class="form-group">
-                <label for="email">Email </label>
-                <input type="email" name="email" class="form-control" placeholder="Enter email">
-            </div>
-            <button type="submit" class="btn btn-primary">Borrar</button>
-            </form>
-           
-        </div>
+        
+            <?php 
+            if(isset($_POST['submit']))
+            {
+                echo '<div class = "jumbotron">';
+                $dbc = mysqli_connect('localhost','root','andrea','elvisStore') or die ('Error Connecting.');
+                echo '<h2>Deleted elements.</h2> <p>';
+                foreach ($_POST['toDelete'] as $deleteId)
+                {
+                    //first of all displaying all the elements to delete before doing it.
+                    $query = 'SELECT * FROM emailList WHERE id = "'.$deleteId.'"';
+                    $result = mysqli_query($dbc,$query) or die ('Error querying the database');
+                    $row = mysqli_fetch_array($result);
+                    echo ' '.$row['firstName'].' '.$row['lastName'].': '.$row['email'].'<br>';
+                    
+                    //deleting the elements.
+                    $query = 'DELETE FROM emailList WHERE id="'.$deleteId.'"';
+                    $result = mysqli_query($dbc,$query) or die ('Error Deleting');
+                }
+                echo '</p><a href="/emails.php" class="btn-lg btn-success">Ok!</a>';
+                echo '</div>';
+            }
+            ?>
+        
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
