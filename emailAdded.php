@@ -55,7 +55,7 @@
                 //inserting into the database
                 $dbc = mysqli_connect('localhost','root','andrea','elvisStore') or die('Error conecting.');
 
-                $query = "INSERT INTO emailList VALUES('$name','$lastName','$email')";
+                $query = "INSERT INTO emailList (firstName,lastName,email) VALUES('$name','$lastName','$email')";
 
                 $result = mysqli_query($dbc,$query) or die('Error insertando en la bd');
 
