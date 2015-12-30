@@ -41,8 +41,9 @@
         <?php
         $outputForm = false;
             if (!empty($_POST['subject']) and !empty($_POST['body'])) {
-                $emailSubject = $_POST['subject'];
+                global $body, $emailSubject;
                 $body=$_POST['body'];
+                $emailSubject= $_POST['subject'];
                 $from = "julizsxd@gmail.com";
                 //db connection
                 $dbc = mysqli_connect('localhost','root','andrea','elvisStore') or die('Error connecting to database.');
@@ -70,15 +71,21 @@
             }
             if(empty($_POST['subject']) and isset($_POST['submit']))
             {
-                echo "olvidaste el asunto. <br>";
+                echo "<p>Olvidaste el asunto. <br>";
                 $outputForm = true;
+                $body=$_POST['body'];
+                $emailSubject = "";
             }
             if (empty($_POST['body']) and isset($_POST['submit'])) {
-                echo "olvidaste el cuerpo del mensaje<br>";
+                echo "<p>Olvidaste el cuerpo del mensaje.</p><br>";
                 $outputForm = true;
+                $emailSubject= $_POST['subject'];
+                $body = NULL;
             }
             if (!isset($_POST['submit'])) {
                 $outputForm = true;
+                $emailSubject = NULL;
+                $body = NULL;
             }
             ?>
             <?php 
@@ -89,11 +96,22 @@
             <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                 <div class="form-group">
                     <label for="subject">Subject </label>
-                    <input type="text" name="subject" class="form-control" placeholder="Insert email's subject.">
+                    <input type="text" name="subject" class="form-control" placeholder="Insert email's subject."
+                     value="<?php 
+                        if ($emailSubject!="")
+                        {
+                            echo $emailSubject;
+                        }
+                     ?>">
                 </div>
                 <div class="form-group">
                     <label for="body">Body </label>
-                    <textarea class="form-control" name="body" rows="7" placeholder="Insert your message."></textarea>
+                    <textarea class="form-control" name="body" rows="7" placeholder="Insert your message."><?php 
+                    if($body != NULL)
+                    {
+                        echo $body;
+                    }
+                     ?></textarea>
                 </div>
                 <button type="submit" name="submit" value="submit" class="btn btn-primary">enviar!</button>
             </form>
